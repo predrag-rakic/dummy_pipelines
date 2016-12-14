@@ -15,46 +15,55 @@ module Pipelines
   end
 
   class Exec
-    def initialize(actions)
-      @cmd=actions.select {|a| a.key? "cmd"}.first["cmd"]
-      # puts @cmd
-      @results = []
+    def initialize(actions, name)
+      @name = name
+      @cmd  = actions.select {|a| a.key? "cmd"}.first["cmd"]
+      @test = actions.select {|a| a.key? "test"}.first["test"]
+      @cmd_results = []
+      @test_results = []
     end
+
     def cmd
       @cmd
     end
+
     def run
-      @cmd.each {|c|
+      run_cmd(@cmd, @cmd_results, true)
+      return if @cmd_results.last.last != 0
+      run_cmd(@test, @test_results, false)
+    end
+
+    def run_cmd(commands, results, should_break)
+      commands.each {|c|
         begin
-          @results << [%x[#{c}], $?.exitstatus]
-          break if $?.exitstatus != 0
+          results << [%x[#{c}], $?.exitstatus]
+          break if should_break and $?.exitstatus != 0
         rescue => e
-          @results << [e, $?.exitstatus]
-          break
+          results << [e, $?.exitstatus]
+          break if should_break
         end
       }
       @results
     end
-    def results
-      @results
+
+    def show
+      [{exec_name: @name, cmd: @cmd, test: @test}, @cmd_results, @test_results]
     end
   end
 
   class Pipeline
     def initialize(actions)
-      @build   = Exec.new(actions["build"])
+      @build   = Exec.new(actions["build"], "build")
       deploys  = actions.select {|a,b| a != "build"}
-      @deploys = deploys.map {|key, value| Exec.new(value)}
+      @deploys = deploys.map {|key, value| Exec.new(value, key)}
     end
 
     def run
-      puts @build.cmd.inspect
-      puts @build.run
-      puts "!!!!!!!!!!!!!!!"
+      @build.run
+      puts @build.show
       @deploys.map {|deploy|
-        puts "????????????"
-        puts deploy.cmd.inspect
-        puts deploy.run
+        deploy.run
+        puts deploy.show
       }
     end
   end
