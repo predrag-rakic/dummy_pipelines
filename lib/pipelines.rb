@@ -25,11 +25,12 @@ module Pipelines
 
     def run
       @build.run
+      @deploys.map {|deploy|  deploy.run  }
+    end
+
+    def show
       puts @build.show
-      @deploys.map {|deploy|
-        deploy.run
-        puts deploy.show
-      }
+      @deploys.map {|deploy| puts deploy.show }
     end
   end
 end
@@ -37,3 +38,4 @@ end
 a = Pipelines.parse_
 e = Pipelines::Pipeline.new a
 e.run
+e.show
