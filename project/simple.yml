@@ -1,0 +1,28 @@
+build:
+ - cmd:
+   - ls lib
+   - df -h
+ - test:
+   - free -m
+   - kjh
+
+integration:
+  - cmd:
+    - pwd
+    - false
+    - true
+  - test:
+    - 1
+
+production:
+  - cmd:
+    - asd
+    - find . -name "lib"
+  - test:
+
+production2:
+  - cmd:
+    - find . -name "lib"
+  - test:
+    - asdf
+    - po12
