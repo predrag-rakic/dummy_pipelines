@@ -5,7 +5,10 @@ describe Pipelines do
     expect(Pipelines::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  it 'creates Exec object' do
+    actions = [{"cmd" => []}, {"test" => []}]
+    e = Pipelines::Exec.new(actions, "foo")
+    expect(e).not_to be nil
+    expect(e.cmd).to eq([])
   end
 end
