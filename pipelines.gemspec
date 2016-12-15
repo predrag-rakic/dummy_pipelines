@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'pipelines/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "pipelines"
+  spec.name          = "dummy_pipelines"
   spec.version       = Pipelines::VERSION
   spec.authors       = ["Predrag Rakic"]
   spec.email         = ["prakic@renderedtext.com"]
